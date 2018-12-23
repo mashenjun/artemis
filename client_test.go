@@ -76,6 +76,30 @@ func TestClient_ChildrenCameras(t *testing.T) {
 	log.Printf("%+v\n", resp)
 }
 
+func TestClient_CameraDetail(t *testing.T) {
+	cli, err := New("https://open8200.hikvision.com", "24341259", "M5llsRpDovRZcB3WkhTk")
+	if err != nil {
+		t.Fatalf("could not new client: %v\n", err)
+	}
+	resp, err := cli.CameraDetail(context.TODO(), "123456")
+	if err != nil {
+		t.Fatalf("could not get cameras detail: %v\n", err)
+	}
+	log.Printf("%+v\n", resp)
+}
+
+func TestClient_PreviewURL(t *testing.T) {
+	cli, err := New("https://open8200.hikvision.com", "24341259", "M5llsRpDovRZcB3WkhTk")
+	if err != nil {
+		t.Fatalf("could not new client: %v\n", err)
+	}
+	resp, err := cli.PreviewURL(context.TODO(), "123455", 0, 0)
+	if err != nil {
+		t.Fatalf("could not get preview url: %v\n", err)
+	}
+	log.Printf("%+v\n", resp)
+}
+
 func TestBase64(t *testing.T) {
 	base := `GET
 */*

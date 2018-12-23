@@ -103,3 +103,9 @@ type CameraDetailRlt struct {
 	Msg   string       `json:"msg"`
 	Data  []CameraDetail `json:"data"`
 }
+
+type PlayURLRlt struct {
+	Code  string       `json:"code"`
+	Msg   string       `json:"msg"`
+	PlayRealURL string `json:"playrealUrl"`
+}
