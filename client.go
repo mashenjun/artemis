@@ -2,6 +2,7 @@ package artemis
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,10 +39,19 @@ func New(endpoint string, ak string, sk string, opts ...func(*Client)) (*Client,
 	return c, nil
 }
 
+func TLSConfigOption (config *tls.Config) func (cli *Client) {
+	return func(cli *Client) {
+		cli.client.Transport.(*AuthTransport).Tr = &http.Transport{
+			TLSClientConfig: config,
+		}
+	}
+}
+
 func (cli *Client) ControlUnits(ctx context.Context, size int, start int) (*ControlUnitsRlt, error) {
 	var rlt ControlUnitsRlt
 	u := fmt.Sprintf("%v%v?size=%v&start=%v",cli.endpoint, findControlUnitPageURI, size, start)
 	req, err := http.NewRequest(http.MethodGet,u, nil)
+	req.Header.Add("accept","application/json")
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +155,7 @@ func (cli *Client) ChildrenCameras(ctx context.Context, size int, start int, tre
 
 func (cli *Client) CameraDetail(ctx context.Context, indexCode string) (*CameraDetailRlt, error) {
 	var rlt CameraDetailRlt
-	u := fmt.Sprintf("%v%v",cli.endpoint, fmt.Sprintf(getCameraDetailURI, indexCode))
+	u := fmt.Sprintf("%v%v?indexCode=%v",cli.endpoint, getCameraDetailURI, indexCode)
 	req, err := http.NewRequest(http.MethodGet,u, nil)
 	if err != nil {
 		return nil, err

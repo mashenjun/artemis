@@ -5,19 +5,22 @@ import (
 	"crypto/hmac"
 	"crypto/md5"
 	"crypto/sha256"
+	"crypto/tls"
 	"encoding/base64"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
 	"strings"
 )
 
+// AuthTransport skip the InsecureSkipVerify by default
 type AuthTransport struct {
-	Ak string
-	Sk string
+	Ak        string
+	Sk        string
 	HeaderMap map[string]struct{}
+	Tr        *http.Transport
 }
-
 
 func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// todo: add auth info according to the artemis docs
@@ -25,9 +28,9 @@ func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	baseStr := req.Method + "\n"
 	if req.Header.Get("Accept") != "" {
 		baseStr = baseStr + req.Header.Get("Accept") + "\n"
-	}else {
+	} else {
 		req.Header.Set("Accept", "*/*")
-		baseStr = baseStr + "*/*"+ "\n"
+		baseStr = baseStr + "*/*" + "\n"
 	}
 
 	// cal MD5 hash
@@ -53,7 +56,7 @@ func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	keys := make([]string, 0) // will be used in header
 	for k, _ := range req.Header {
 		if _, ok := at.HeaderMap[k]; !ok {
-			tmp[strings.ToLower(k)] = strings.ToLower(k)+":"+strings.TrimSpace(req.Header.Get(k))
+			tmp[strings.ToLower(k)] = strings.ToLower(k) + ":" + strings.TrimSpace(req.Header.Get(k))
 			keys = append(keys, strings.ToLower(k))
 		}
 	}
@@ -61,40 +64,46 @@ func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	for _, key := range keys {
 		baseStr = baseStr + tmp[key] + "\n"
 	}
-	baseStr = baseStr + "x-ca-key:"+ at.Ak + "\n"
+	baseStr = baseStr + "x-ca-key:" + at.Ak + "\n"
 	req.Header.Set("x-ca-key", at.Ak)
 	keys = append(keys, "x-ca-key")
 	sort.Strings(keys)
 	if req.URL.RawQuery != "" {
-		baseStr	= baseStr + req.URL.Path + "?"+ req.URL.RawQuery
-	}else {
-		baseStr	= baseStr + req.URL.Path
+		baseStr = baseStr + req.URL.Path + "?" + req.URL.RawQuery
+	} else {
+		baseStr = baseStr + req.URL.Path
 	}
+	fmt.Println(baseStr)
 	h := hmac.New(sha256.New, []byte(at.Sk))
 	h.Write([]byte(baseStr))
 	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
 	req.Header.Set("x-ca-signature", signed)
 	req.Header.Set("x-ca-signature-headers", strings.Join(keys, ","))
 
-	// still use default transport to send request
-	return http.DefaultTransport.RoundTrip(req)
+	//return http.DefaultTransport.RoundTrip(req)
+	return at.Tr.RoundTrip(req)
 }
 
-func NewAuthTransport(ak string, sk string) (*AuthTransport) {
+func NewAuthTransport(ak string, sk string) *AuthTransport {
 	headerMap := map[string]struct{}{
-		"X-Ca-Signature": struct{}{},
-		"X-Ca-Signature-Headers":struct{}{},
-		"Accept":struct{}{},
-		"Content-MD5":struct{}{},
-		"Content-Type":struct{}{},
-		"Date":struct{}{},
-		"Content-Length":struct{}{},
-		"Server":struct{}{},
-		"Connection":struct{}{},
-		"Host":struct{}{},
-		"Transfer-Encoding":struct{}{},
-		"X-Application-Context":struct{}{},
-		"Content-Encoding":struct{}{},
+		"X-Ca-Signature":         struct{}{},
+		"X-Ca-Signature-Headers": struct{}{},
+		"Accept":                 struct{}{},
+		"Content-MD5":            struct{}{},
+		"Content-Type":           struct{}{},
+		"Date":                   struct{}{},
+		"Content-Length":         struct{}{},
+		"Server":                 struct{}{},
+		"Connection":             struct{}{},
+		"Host":                   struct{}{},
+		"Transfer-Encoding":      struct{}{},
+		"X-Application-Context":  struct{}{},
+		"Content-Encoding":       struct{}{},
 	}
-	return &AuthTransport{Ak: ak, Sk: sk, HeaderMap:headerMap}
+	return &AuthTransport{Ak: ak,
+		Sk: sk, HeaderMap: headerMap,
+		Tr: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}}
 }
+
