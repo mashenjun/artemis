@@ -7,7 +7,6 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/base64"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"sort"
@@ -73,7 +72,6 @@ func (at AuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	} else {
 		baseStr = baseStr + req.URL.Path
 	}
-	fmt.Println(baseStr)
 	h := hmac.New(sha256.New, []byte(at.Sk))
 	h.Write([]byte(baseStr))
 	signed := base64.StdEncoding.EncodeToString(h.Sum(nil))
