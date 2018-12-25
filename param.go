@@ -25,9 +25,10 @@ type ControlUnitsRlt struct {
 }
 
 type ChildrenControlUnitsRlt struct {
-	Code string            `json:"code"`
-	Msg  string            `json:"msg"`
-	Data []ControlUnitInfo `json:"data"`
+	Code  string            `json:"code"`
+	Msg   string            `json:"msg"`
+	Data  []ControlUnitInfo `json:"data"`
+	Total string            `json:"total"`
 }
 
 type SecurityInfo struct {
@@ -61,27 +62,27 @@ type CameraInfo struct {
 }
 
 type CameraDetail struct {
-	ID        int                 `json:"id"`
-	MatrixCode string `json:"matrix_code"`
-	IndexCode       string                 `json:"indexCode"`
-	Name            string                 `json:"name"`
-	AppCode string `json:"appCode"`
-	OriginalIndexCode string `json:"originalIndexcode"`
-	ChanNum int `json:"chanNum"`
-	DeviceIndex string `json:"deviceIdx"`
-	ParentIndexCode string                 `json:"parentIndexCode"`
-	CameraType      string                    `json:"cameraType"`
-	Pixel           string                    `json:"pixel"`
-	Latitude        float64                 `json:"latitude"`
-	Longitude       float64                 `json:"longitude"`
-	IsOnline        string                    `json:"isOnline"`
-	DecodeTag       string                 `json:"decodeTag"`
-	CreateTime      uint64                 `json:"createTime"`
-	UpdateTime      uint64                 `json:"updateTime"`
-	TreeNodeIndexCode string `json:"treeNodeIndexcode"`
-	TreeNodePath string `json:"treeNodePath"`
-	TypeCode string `json:"typeCode"`
-	ExtraField      map[string]interface{} `json:"extraField"`
+	ID                int                    `json:"id"`
+	MatrixCode        string                 `json:"matrix_code"`
+	IndexCode         string                 `json:"indexCode"`
+	Name              string                 `json:"name"`
+	AppCode           string                 `json:"appCode"`
+	OriginalIndexCode string                 `json:"originalIndexcode"`
+	ChanNum           int                    `json:"chanNum"`
+	DeviceIndex       string                 `json:"deviceIdx"`
+	ParentIndexCode   string                 `json:"parentIndexCode"`
+	CameraType        string                 `json:"cameraType"`
+	Pixel             string                 `json:"pixel"`
+	Latitude          float64                `json:"latitude"`
+	Longitude         float64                `json:"longitude"`
+	IsOnline          string                 `json:"isOnline"`
+	DecodeTag         string                 `json:"decodeTag"`
+	CreateTime        uint64                 `json:"createTime"`
+	UpdateTime        uint64                 `json:"updateTime"`
+	TreeNodeIndexCode string                 `json:"treeNodeIndexcode"`
+	TreeNodePath      string                 `json:"treeNodePath"`
+	TypeCode          string                 `json:"typeCode"`
+	ExtraField        map[string]interface{} `json:"extraField"`
 }
 
 type CamerasRlt struct {
@@ -99,13 +100,13 @@ type ChildrenCamerasRlt struct {
 }
 
 type CameraDetailRlt struct {
-	Code  string       `json:"code"`
-	Msg   string       `json:"msg"`
-	Data  []CameraDetail `json:"data"`
+	Code string         `json:"code"`
+	Msg  string         `json:"msg"`
+	Data []CameraDetail `json:"data"`
 }
 
 type PlayURLRlt struct {
-	Code  string       `json:"code"`
-	Msg   string       `json:"msg"`
+	Code        string `json:"code"`
+	Msg         string `json:"msg"`
 	PlayRealURL string `json:"playrealUrl"`
 }
