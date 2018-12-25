@@ -25,10 +25,10 @@ type ControlUnitsRlt struct {
 }
 
 type ChildrenControlUnitsRlt struct {
-	Code  string            `json:"code"`
-	Msg   string            `json:"msg"`
-	Data  []ControlUnitInfo `json:"data"`
-	Total string            `json:"total"`
+	Code string            `json:"code"`
+	Msg  string            `json:"msg"`
+	Data []ControlUnitInfo `json:"data"`
+	Page PageInfo          `json:"page"`
 }
 
 type SecurityInfo struct {
@@ -89,7 +89,7 @@ type CamerasRlt struct {
 	Code  string       `json:"code"`
 	Msg   string       `json:"msg"`
 	Data  []CameraInfo `json:"data"`
-	Total string       `json:"total"`
+	Page PageInfo     `json:"page"`
 }
 
 type ChildrenCamerasRlt struct {
