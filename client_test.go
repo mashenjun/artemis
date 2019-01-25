@@ -45,7 +45,7 @@ func TestClient_SecurityInfo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not new client: %v\n", err)
 	}
-	resp, err := cli.SecurityInfo(context.TODO(), "24341259")
+	resp, err := cli.SecurityInfo(context.TODO())
 	if err != nil {
 		t.Fatalf("could not get security info: %v\n", err)
 	}
